@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 '''
 , utils.EzPickle
 '''
-class UniflexRRMEnv(gym.Env):
+class UniflexEnv(gym.Env):
 '''
     metadata = {'render.modes': ['human']}
 '''

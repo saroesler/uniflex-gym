@@ -11,10 +11,6 @@ logger = logging.getLogger(__name__)
 
 
 class UniflexEnv(gym.Env):
-'''
-    metadata = {'render.modes': ['human']}
-'''
-
     def __init__(self, stepTime, **kwargs):
         self.stepTime = stepTime
         
@@ -35,23 +31,21 @@ class UniflexEnv(gym.Env):
         
         self.observation_space = self.controller.get_observationSpace()
         self.action_space = self.controller.get_actionSpace()
+    """
+    ---------------------------------------------------------------------------------------
+    Main API:
 
-"""
----------------------------------------------------------------------------------------
-Main API:
+    Attributes:
+        observation_space
+        action_space
 
-Attributes:
-    observation_space
-    action_space
-
-Methods:
-    - observation = reset()
-    - observation, reward, done, info = step(action)
-    - render() -> not used
-    
-    observation and state are similarities
-"""
-
+    Methods:
+        - observation = reset()
+        - observation, reward, done, info = step(action)
+        - render() -> not used
+        
+        observation and state are similarities
+    """
     def _step(self, action):
         self.controller.execute_action(action)
         time.sleep(self.stepTime)

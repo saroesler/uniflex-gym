@@ -1,3 +1,5 @@
+from UniFlexGym.interfaces.uniflex_controller import UniFlexController
+
 import os, subprocess, time, signal
 import gym
 from gym import error, spaces

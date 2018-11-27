@@ -5,6 +5,6 @@ logger = logging.getLogger(__name__)
 
 register(
     id='uniflex-v0',
-    entry_point='envs.uniflex_env:UniflexEnv',
+    entry_point='UniFlexGym.envs.uniflex_env:UniflexEnv',
 )
 

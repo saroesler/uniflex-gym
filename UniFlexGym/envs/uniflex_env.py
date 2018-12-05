@@ -58,10 +58,12 @@ class UniflexEnv(gym.Env):
         '''
         start 
         '''
-        self.controller = _get_openAI_controller(config, self.uniflex_agent.moduleManager)[0]
-        if not self.controller:
+        controllerList = self._get_openAI_controller(config, self.uniflex_agent.moduleManager)
+        if len(controllerList) < 1:
             logger.error("We cannot find a OpenAI controller. Please define it in the config file")
+            raise AttributeError('No cntroller!')
             return
+        self.controller = controllerList[0]
         self.controller.reset()
         self.observation_space = self.controller.get_observationSpace()
         self.action_space = self.controller.get_actionSpace()
@@ -84,8 +86,8 @@ class UniflexEnv(gym.Env):
             if(not openAiGymControler):
                 continue
             
-            for module in moduleManager.modules:
-                if module.name is pyClassName:
+            for module in moduleManager.modules.values():
+                if module.name == pyClassName:
                     openAIModules.append(module)
         return openAIModules
     '''

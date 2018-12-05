@@ -4,47 +4,103 @@ from gym import error, spaces
 from gym import utils
 from gym.utils import seeding
 import importlib
-
-
 import logging
+import yaml
+
+from uniflex.core.agent import Agent
+
+
 logger = logging.getLogger(__name__)
 
+'''
+TODO
+except KeyboardInterrupt:
+        logger.debug("Agent exits")
+    finally:
+        logger.debug("Exit")
+        agent.stop()
+'''
 
 class UniflexEnv(gym.Env):
     def __init__(self):
         self.stepTime = 10
         self.controller = None
+        self.uniflex_agent = Agent()
     
     def start_controller(self, **kwargs):
-        controllerName = 'controller.Controller'
+        '''
+        This part of the code is taken from uniflex-agent
+        Copyright (c) 2015, Technische Universität Berlin
+        Authors: Piotr Gawlowicz, Mikolaj Chwalisz
+        '''
+        logger.debug(kwargs)
+        if not 'config' in kwargs:
+            logger.error("Please run OpenAI uniflex_env with a uniflex config file")
+            raise AttributeError('No config file')
+            return
         
-        if 'controller' in kwargs:
-            controllerName = kwargs['controller']
+        config_file_path = kwargs['config']
         
-        #currentDirectory = os.getcwd()
-        controllerSplit = controllerName.split(".")
-        modulePath = ".".join(controllerSplit[:-1])
-        className = controllerSplit[-1]
-
-        controllerModule = importlib.import_module(modulePath)
-        controllerClass = getattr(controllerModule, className)
-        self.controller = controllerClass(**kwargs)
+        configPath = os.path.dirname(os.path.abspath(config_file_path))
+        
+        config = None
+        with open(config_file_path, 'r') as f:
+            config = yaml.load(f)
+        
+        self.uniflex_agent.load_config(config, configPath)
+        '''
+        self.uniflex_agent.run() is blocking, 
+        paste the remaining code here:
+        '''
+        self.uniflex_agent.moduleManager.start()
+        
+        
+        '''
+        start 
+        '''
+        self.controller = _get_openAI_controller(config, self.uniflex_agent.moduleManager)[0]
+        if not self.controller:
+            logger.error("We cannot find a OpenAI controller. Please define it in the config file")
+            return
         self.controller.reset()
-        
         self.observation_space = self.controller.get_observationSpace()
         self.action_space = self.controller.get_actionSpace()
-    
-    def configure(self, **kwargs):
+        
         if 'steptime' in kwargs:
             self.stepTime = kwargs['steptime']
+    
+    def _get_openAI_controller(self, config, moduleManager):
+        controlApps = config.get('control_applications', {})
+        openAIModules = []
+        
+        for controlAppName, params in controlApps.items():
+            pyModuleName = params.get('module', None)
+            if not pyModuleName:
+                myfile = params.get('file', None)
+                pyModuleName = myfile.split('.')[0]
+            pyClassName = params.get('class_name', None)
+            openAiGymControler = params.get('openAIGymController', False)
+            
+            if(not openAiGymControler):
+                continue
+            
+            for module in moduleManager.modules:
+                if module.name is pyClassName:
+                    openAIModules.append(module)
+        return openAIModules
+    '''
+        def configure(self, **kwargs):
+            if 'steptime' in kwargs:
+                self.stepTime = kwargs['steptime']
+    '''
     """
     ---------------------------------------------------------------------------------------
     Main API:
-
+    
     Attributes:
         observation_space
         action_space
-
+    
     Methods:
         - observation = reset()
         - observation, reward, done, info = step(action)

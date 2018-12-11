@@ -6,6 +6,7 @@ from gym.utils import seeding
 import importlib
 import logging
 import yaml
+import threading
 
 from uniflex.core.agent import Agent
 
@@ -63,6 +64,7 @@ class UniflexEnv(gym.Env):
             logger.error("We cannot find a OpenAI controller. Please define it in the config file")
             raise AttributeError('No cntroller!')
             return
+        threading.currentThread().module = self.controller
         self.controller = controllerList[0]
         self.controller.reset()
         self.observation_space = self.controller.get_observationSpace()

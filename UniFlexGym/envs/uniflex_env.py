@@ -128,6 +128,7 @@ class UniflexEnv(gym.Env):
     def reset(self):
         self.controller.reset()
         self.observation_space = self.controller.get_observationSpace()
+        self.action_space = self.controller.get_actionSpace()
         time.sleep(self.stepTime)
         return self.controller.get_observation()
 

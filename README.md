@@ -1,24 +1,18 @@
-# gym-soccer
+# UniFlex-Gym
 
-The [Soccer environment](https://github.com/LARG/HFO) is a multiagent
-domain featuring continuous state and action spaces. Currently,
-several tasks are supported:
+The [UniFlex environment](https://github.com/LARG/HFO) is an interface between UniFlex and openAI gym. It combines Software Defined Networking for WiFi with reinforcement learning. The environment creates a new interface to UniFlex controller. It is in the middle between the controller and the machine learning agent. The environent instantiates and starts the UniFlex controller. Therefore, it extends the openAI gym description by a `start_controller` method. The environent cares about steping. Therefore, the `step` method is a blocking call. Internaly it calls sleep. The sleep time in configurable.
 
-## Soccer
+A UniFlex controler has to implement the `UniFlexController` interface. 
 
-The soccer task initializes a single offensive agent on the field and rewards +1 for scoring a goal and 0 otherwise. In order to score a goal, the agent will need to know how to approach the ball and kick towards the goal. The sparse nature of the goal reward makes this task very difficult to accomplish.
+## Installation
 
-## SoccerEmptyGoal
-
-The SoccerEmptyGoal task features a more informative reward signal than the Soccer task. As before, the objective is to score a goal. However, SoccerEmtpyGoal rewards the agent for approaching the ball and moving the ball towards the goal. These frequent rewards make the task much more accessible.
-
-## SoccerAgainstKeeper
-
-The objective of the SoccerAgainstKeeper task is to score against a goal keeper. The agent is rewarded for moving the ball towards the goal and for scoring a goal. The goal keeper uses a hand-coded policy developed by the Helios RoboCup team. The difficulty in this task is learning how to shoot around the goal keeper.
-
-# Installation
+Please install UniFlex and openAI gym first:
 
 ```bash
-cd gym-soccer
+cd uniflex-environent
 pip install -e .
 ```
+
+## Background
+This work is part of the Bachelor Thesis
+`Steuerung von Software Defined WLAN durch Machine Learning-Agenten am Beispiel der Kanalvergabe` at Technische Universität Berlin, Telecommunicatoin Network Group in 2019
